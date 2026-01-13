@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { FileHeaders } from './file-upload.models';
+import { FileUploadConfig } from './file-upload.config';
 
 @Injectable({
     providedIn: 'root'
@@ -28,22 +29,15 @@ export class GoogleStorageService {
             httpHeaders = httpHeaders.append(key, headers[key]);
         });
 
-        console.log('Sending headers to GCS:', headers);
+        console.log('Initiating upload to:', signUrl);
 
-        // Note: The example code passed 'null' as body for POST, and headers in options.
-        // We need to match the signature exactly.
-        // The previous code did: new HttpHeaders(headers) which assumes headers is a simple map. It is.
-
-        console.log(`Initiating upload to: ${signUrl}`);
         const response = await lastValueFrom(
             this.http.post(signUrl, null, {
-                headers: new HttpHeaders(headers as any),
+                headers: httpHeaders,
                 observe: 'response',
                 responseType: 'text'
             })
         );
-
-        console.log('Upload initiation response:', response.status, response.headers.get('Location'));
 
         if (response.status !== 201 && response.status !== 200) {
             throw new Error(`Upload initiation failed. Status: ${response.status}`);
@@ -51,7 +45,7 @@ export class GoogleStorageService {
 
         const uploadUrl = response.headers.get('Location');
         if (!uploadUrl) {
-            throw new Error('No upload URL received from server');
+            throw new Error('No upload URL received from GCS');
         }
 
         return uploadUrl;
@@ -78,19 +72,14 @@ export class GoogleStorageService {
                     })
                 );
             } catch (error: any) {
-                if (error.status !== 308) { // 308 = chunk uploaded successfully / resume incomplete
-                    // Actually 308 is expected for incomplete resume, but if we finish the last chunk we might get 200/201.
-                    // Angular HttpClient might throw on 308 depending on config, but standard XHR treats it as status.
-                    // Let's assume standard behavior: if it fails with something other than 308 (Resume Incomplete) or 200/201 (Created/OK), it's an error.
-                    if (error.status === 308) {
-                        // This is actually fine for intermediate chunks
-                    } else {
-                        throw new Error(`Chunk ${i}/${totalChunks} failed: ${error.message || error}`);
-                    }
+                if (error.status === 308) {
+                    console.log(`Chunk ${i}/${totalChunks} uploaded (Resume Incomplete)`);
+                } else if (error.status >= 200 && error.status < 300) {
+                    console.log(`Chunk ${i}/${totalChunks} uploaded successfully`);
+                } else {
+                    throw new Error(`Chunk ${i}/${totalChunks} failed: ${error.message || error}`);
                 }
             }
-
-            console.log(`Chunk ${i}/${totalChunks} uploaded`);
         }
     }
 }

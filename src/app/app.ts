@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FileUploadComponent } from './file-upload/file-upload';
@@ -29,7 +29,10 @@ export class AppComponent {
   isUploading = false;
   uploadStatus = '';
 
-  constructor(private uploadService: FileUploadService) { } // Using property injection instead of constructor injection if preferred, but ctor is standard. Fix imports above if needed.
+  constructor(
+    private uploadService: FileUploadService,
+    private cdr: ChangeDetectorRef
+  ) { } // Using property injection instead of constructor injection if preferred, but ctor is standard. Fix imports above if needed.
 
   setToken() {
     let cleanToken = this.token.trim();
@@ -64,21 +67,19 @@ export class AppComponent {
       return;
     }
 
-    this.isUploading = true;
-    this.uploadStatus = 'Starting upload...';
-
-    const request: UploadRequest = {
-      caseNumber: this.caseNumber,
-      startPeriod: this.startPeriod, // Ensure format is DD-MM-YYYY if user inputs ISO
-      endPeriod: this.endPeriod,
-    };
-
     try {
-      // Assuming files order: [0] = INI, [1] = BKMVDATA. 
-      // The API usually expects them in a specific order or doesn't care if configured right.
-      // Based on previous conversations, I'll pass them in the order displayed.
+      console.log('--- Send Files Started ---');
+      this.isUploading = true;
+      this.uploadStatus = 'Starting upload...';
+
+      const request: UploadRequest = {
+        caseNumber: this.caseNumber,
+        startPeriod: this.startPeriod,
+        endPeriod: this.endPeriod,
+      };
+
       await this.uploadService.uploadPair(
-        [this.iniFile, this.bkmvdataFile],
+        [this.iniFile!, this.bkmvdataFile!],
         this.token,
         request
       );
@@ -91,6 +92,8 @@ export class AppComponent {
       alert(`Upload failed: ${error.message}`);
     } finally {
       this.isUploading = false;
+      this.cdr.detectChanges();
+      console.log('--- Send Files Finished (State Reset) ---');
     }
   }
 }

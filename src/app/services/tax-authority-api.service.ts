@@ -22,10 +22,11 @@ export class TaxAuthorityApiService {
         // }
 
         try {
+            console.log('1. Calling Tax Authority API metadata endpoint...');
             const response = await lastValueFrom(
                 this.http.post<UploadUrlResponse>(FileUploadConfig.API_URL, request, { headers })
             );
-            console.log('Tax API Full Response:', response);
+            console.log('2. Tax API metadata response received:', response);
 
             if (!response) {
                 throw new Error('No response from API');

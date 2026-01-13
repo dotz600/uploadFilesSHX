@@ -20,8 +20,9 @@ export class FileUploadService {
         request: UploadRequest
     ): Promise<[string, string]> {
         // 1. Get URLs
-        console.log('Fetching upload URLs...');
+        console.log('A. Requesting signed URLs from service...');
         const response = await this.taxApi.getUploadUrls(token, request);
+        console.log('B. Signed URLs received:', response.data?.files.length, 'files');
         const fileIds: [string, string] = ['', ''];
 
         // 2. Upload each file
