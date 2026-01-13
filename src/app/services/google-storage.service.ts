@@ -22,16 +22,19 @@ export class GoogleStorageService {
         }
 
         // Initiate resumable upload
-        // We must pass the specific headers required by the signed URL
-        const httpHeaders = new HttpHeaders();
+        let httpHeaders = new HttpHeaders();
         Object.keys(headers).forEach(key => {
-            httpHeaders.append(key, headers[key]);
+            // HttpHeaders is immutable, must assign back
+            httpHeaders = httpHeaders.append(key, headers[key]);
         });
+
+        console.log('Sending headers to GCS:', headers);
 
         // Note: The example code passed 'null' as body for POST, and headers in options.
         // We need to match the signature exactly.
         // The previous code did: new HttpHeaders(headers) which assumes headers is a simple map. It is.
 
+        console.log(`Initiating upload to: ${signUrl}`);
         const response = await lastValueFrom(
             this.http.post(signUrl, null, {
                 headers: new HttpHeaders(headers as any),
@@ -40,7 +43,9 @@ export class GoogleStorageService {
             })
         );
 
-        if (response.status !== 201) {
+        console.log('Upload initiation response:', response.status, response.headers.get('Location'));
+
+        if (response.status !== 201 && response.status !== 200) {
             throw new Error(`Upload initiation failed. Status: ${response.status}`);
         }
 

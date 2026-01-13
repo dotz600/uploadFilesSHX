@@ -13,9 +13,7 @@ export class TaxAuthorityApiService {
     async getUploadUrls(token: string, request: UploadRequest): Promise<UploadUrlResponse> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-            'Cache-Control': 'no-cache'
+            'Content-Type': 'application/json'
         });
 
         // Note: Token is passed dynamically now
@@ -27,6 +25,7 @@ export class TaxAuthorityApiService {
             const response = await lastValueFrom(
                 this.http.post<UploadUrlResponse>(FileUploadConfig.API_URL, request, { headers })
             );
+            console.log('Tax API Full Response:', response);
 
             if (!response) {
                 throw new Error('No response from API');

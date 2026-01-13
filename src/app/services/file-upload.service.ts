@@ -34,21 +34,27 @@ export class FileUploadService {
 
             const fileData = response.data!.files[i];
 
-            console.log(`Uploading ${i + 1}/2: ${file.name} to ${fileData.fileName}`);
+            console.log(`Step ${i + 1}/2: Uploading local file "${file.name}" to remote file name "${fileData.fileName}"`);
+            console.log(`Using Sign URL: ${fileData.signUrl}`);
 
-            // 3. Initiate
-            const uploadUrl = await this.storage.initiateUpload(
-                fileData.signUrl,
-                fileData.headers,
-                file.size
-            );
+            try {
+                // 3. Initiate
+                const uploadUrl = await this.storage.initiateUpload(
+                    fileData.signUrl,
+                    fileData.headers,
+                    file.size
+                );
 
-            // 4. Chunked Upload
-            const chunkSize = this.calculateChunkSize(file.size);
-            await this.storage.uploadChunks(file, uploadUrl, chunkSize);
+                // 4. Chunked Upload
+                const chunkSize = this.calculateChunkSize(file.size);
+                await this.storage.uploadChunks(file, uploadUrl, chunkSize);
 
-            fileIds[i] = fileData.fileUniqueId;
-            console.log(`✓ File ${i + 1} complete. ID: ${fileIds[i]}`);
+                fileIds[i] = fileData.fileUniqueId;
+                console.log(`✓ File ${i + 1} complete. ID: ${fileIds[i]}`);
+            } catch (err: any) {
+                console.error(`Error during upload of file ${i + 1}:`, err);
+                throw new Error(`Failed to upload file ${i + 1} (${file.name}): ${err.message || err}`);
+            }
         }
 
         return fileIds;
