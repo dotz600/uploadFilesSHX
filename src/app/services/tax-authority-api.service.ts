@@ -13,7 +13,9 @@ export class TaxAuthorityApiService {
     async getUploadUrls(token: string, request: UploadRequest): Promise<UploadUrlResponse> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+            'Cache-Control': 'no-cache'
         });
 
         // Note: Token is passed dynamically now

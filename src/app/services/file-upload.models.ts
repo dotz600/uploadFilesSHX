@@ -1,7 +1,7 @@
 export interface UploadRequest {
     caseNumber: number;
-    startPeriod: string;      // Format: DD-MM-YYYY
-    endPeriod: string;        // Format: DD-MM-YYYY
+    startPeriod: string;      // Format: YYYY-MM-DD
+    endPeriod: string;        // Format: YYYY-MM-DD
     representorCompanyId?: number;
 }
 

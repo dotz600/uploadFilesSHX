@@ -32,7 +32,13 @@ export class AppComponent {
   constructor(private uploadService: FileUploadService) { } // Using property injection instead of constructor injection if preferred, but ctor is standard. Fix imports above if needed.
 
   setToken() {
-    if (this.token && this.token.trim().length > 0) {
+    let cleanToken = this.token.trim();
+    if (cleanToken.toLowerCase().startsWith('bearer ')) {
+      cleanToken = cleanToken.substring(7).trim();
+      this.token = cleanToken;
+    }
+
+    if (cleanToken.length > 0) {
       this.isTokenSet = true;
     } else {
       this.isTokenSet = false;
