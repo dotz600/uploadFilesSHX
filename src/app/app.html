@@ -1,0 +1,52 @@
+<main class="main-container">
+  <h1 class="page-title">File Upload Dashboard</h1>
+
+  <!-- Token Section -->
+  <div class="token-section glass-card">
+    <div class="input-group full-width">
+      <label>Authorization Token (Bearer)</label>
+      <div class="token-input-wrapper">
+        <input type="password" [(ngModel)]="token" placeholder="Paste your token here..." class="premium-input"
+          [disabled]="isTokenSet">
+        <button class="set-token-btn" (click)="setToken()" *ngIf="!isTokenSet">Set</button>
+        <button class="edit-token-btn" (click)="isTokenSet = false" *ngIf="isTokenSet">Edit</button>
+        <div class="check-mark" *ngIf="isTokenSet">
+          ✅
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Form -->
+  <div class="form-container glass-card">
+    <div class="input-group">
+      <label>Case Number</label>
+      <input type="number" [(ngModel)]="caseNumber" placeholder="e.g. 123456" class="premium-input">
+    </div>
+    <div class="input-group">
+      <label>Start Period (DD-MM-YYYY)</label>
+      <input type="text" [(ngModel)]="startPeriod" placeholder="01-01-2023" class="premium-input">
+    </div>
+    <div class="input-group">
+      <label>End Period (DD-MM-YYYY)</label>
+      <input type="text" [(ngModel)]="endPeriod" placeholder="31-12-2023" class="premium-input">
+    </div>
+  </div>
+
+  <div class="upload-grid">
+    <app-file-upload title="Select INI File" accept=".txt" (fileSelected)="onIniSelected($event)">
+    </app-file-upload>
+
+    <app-file-upload title="Select BKMVDATA File" accept=".txt" (fileSelected)="onBkmvdataSelected($event)">
+    </app-file-upload>
+  </div>
+
+  <div class="actions">
+    <button class="send-btn" [disabled]="isUploading" (click)="sendFiles()">
+      {{ isUploading ? 'Uploading...' : 'Send Files' }}
+    </button>
+  </div>
+
+  <p *ngIf="uploadStatus" class="status-msg">{{ uploadStatus }}</p>
+
+</main>
