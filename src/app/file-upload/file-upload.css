@@ -30,18 +30,18 @@
 
 h2 {
     margin: 0 0 20px 0;
-    color: var(--text-main);
+    color: #1e293b;
     font-weight: 700;
     font-size: 1.2rem;
 }
 
 .drop-zone {
-    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border: 2px dashed #cbd5e1;
     border-radius: 16px;
     padding: 30px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
+    background: #f8fafc;
     position: relative;
     overflow: hidden;
     flex-grow: 1;
@@ -54,20 +54,21 @@ h2 {
 
 .drop-zone:hover,
 .drop-zone.dragging {
-    border-color: #fff;
-    background: rgba(255, 255, 255, 0.2);
+    border-color: #2575fc;
+    background: #eff6ff;
     transform: scale(1.02);
 }
 
 .drop-zone.has-file {
     border-style: solid;
-    background: rgba(255, 255, 255, 0.3);
+    border-color: #86efac;
+    background: #f0fdf4;
 }
 
 .empty-state p {
     margin: 16px 0 0 0;
     font-size: 0.9rem;
-    color: #444;
+    color: #64748b;
 }
 
 .drop-zone span {
@@ -124,7 +125,7 @@ h2 {
 .file-name {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #333;
+    color: #1e293b;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -133,13 +134,13 @@ h2 {
 
 .file-size {
     font-size: 0.75rem;
-    color: #555;
+    color: #64748b;
 }
 
 .remove-btn {
-    background: rgba(255, 255, 255, 0.5);
+    background: #fee2e2;
     border: none;
-    color: #e74c3c;
+    color: #dc2626;
     cursor: pointer;
     padding: 8px;
     font-size: 1rem;
@@ -154,6 +155,6 @@ h2 {
 }
 
 .remove-btn:hover {
-    background: #e74c3c;
+    background: #dc2626;
     color: white;
 }

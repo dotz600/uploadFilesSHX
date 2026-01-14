@@ -18,8 +18,10 @@
 }
 
 .page-title-mini {
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     font-weight: 800;
     font-size: 2.2rem;
     margin: 0;
@@ -31,18 +33,18 @@
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
     border-radius: 50px;
     padding: 5px 15px;
     transition: all 0.3s ease;
     z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .token-container.token-active {
-    background: rgba(34, 197, 94, 0.1);
-    border-color: rgba(34, 197, 94, 0.3);
+    background: #f0fdf4;
+    border-color: #86efac;
     cursor: pointer;
 }
 
@@ -55,14 +57,14 @@
 .compact-token-input {
     background: transparent;
     border: none;
-    color: white;
+    color: #1e293b;
     font-size: 0.85rem;
     outline: none;
     width: 120px;
 }
 
 .compact-token-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: #94a3b8;
 }
 
 .small-set-btn {
@@ -106,24 +108,25 @@
 .input-group label {
     font-size: 0.85rem;
     margin-bottom: 6px;
-    color: #333;
+    color: #475569;
     font-weight: 600;
 }
 
 .premium-input {
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 1rem;
     outline: none;
     transition: all 0.2s;
     width: 200px;
+    color: #1e293b;
 }
 
 .premium-input:focus {
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+    box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.15);
     border-color: #2575fc;
 }
 
@@ -171,17 +174,19 @@
 }
 
 .status-msg {
-    color: white;
+    color: #1e293b;
     font-weight: 500;
-    background: rgba(0, 0, 0, 0.3);
+    background: #f1f5f9;
     padding: 10px 20px;
     border-radius: 20px;
     animation: fadeIn 0.5s;
+    border: 1px solid #cbd5e1;
 }
 
 .error-msg {
-    background: rgba(220, 38, 38, 0.4);
-    border: 1px solid rgba(220, 38, 38, 0.5);
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
 }
 
 .success-section {
@@ -199,13 +204,13 @@
 }
 
 .success-section h2 {
-    color: #166534;
+    color: #15803d;
     font-size: 2rem;
     margin-bottom: 10px;
 }
 
 .success-section p {
-    color: #333;
+    color: #475569;
     margin-bottom: 25px;
     font-size: 1.1rem;
 }
@@ -280,12 +285,13 @@
 }
 
 .edit-token-btn {
-    background: rgba(255, 255, 255, 0.4);
-    color: #333;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
 }
 
 .edit-token-btn:hover {
-    background: rgba(255, 255, 255, 0.6);
+    background: #e2e8f0;
 }
 
 .check-mark {
