@@ -53,4 +53,12 @@
 
   <p *ngIf="uploadStatus" class="status-msg" [class.error-msg]="uploadStatus.includes('נכשל')">{{ uploadStatus }}</p>
 
+  <!-- Loading Spinner Overlay -->
+  <div class="spinner-overlay" *ngIf="isUploading">
+    <div class="spinner-container">
+      <div class="spinner"></div>
+      <p class="spinner-text">מעלה קבצים...</p>
+    </div>
+  </div>
+
 </main>

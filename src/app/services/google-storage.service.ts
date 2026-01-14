@@ -23,11 +23,7 @@ export class GoogleStorageService {
         }
 
         // Initiate resumable upload
-        let httpHeaders = new HttpHeaders();
-        Object.keys(headers).forEach(key => {
-            // HttpHeaders is immutable, must assign back
-            httpHeaders = httpHeaders.append(key, headers[key]);
-        });
+        const httpHeaders = new HttpHeaders(headers);
 
         console.log('Initiating upload to:', signUrl);
 
