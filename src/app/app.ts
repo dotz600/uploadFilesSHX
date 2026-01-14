@@ -27,6 +27,7 @@ export class AppComponent {
   bkmvdataFile: File | null = null;
 
   isUploading = false;
+  isSuccess = false;
   uploadStatus = '';
 
   constructor(
@@ -45,7 +46,7 @@ export class AppComponent {
       this.isTokenSet = true;
     } else {
       this.isTokenSet = false;
-      alert('Please enter a valid token.');
+      alert('אנא הזן טוקן תקין.');
     }
   }
 
@@ -59,18 +60,18 @@ export class AppComponent {
 
   async sendFiles() {
     if (!this.iniFile || !this.bkmvdataFile) {
-      alert('Please select both files.');
+      alert('אנא בחר את שני הקבצים.');
       return;
     }
     if (!this.caseNumber || !this.startPeriod || !this.endPeriod) {
-      alert('Please fill in all details (Case Number, Dates).');
+      alert('אנא מלא את כל הפרטים (מספר תיק, תאריכים).');
       return;
     }
 
     try {
       console.log('--- Send Files Started ---');
       this.isUploading = true;
-      this.uploadStatus = 'Starting upload...';
+      this.uploadStatus = 'מתחילה בשידור...';
 
       const request: UploadRequest = {
         caseNumber: this.caseNumber,
@@ -84,16 +85,24 @@ export class AppComponent {
         request
       );
 
-      this.uploadStatus = 'Upload successfully completed!';
-      alert('Upload successfully completed!');
+      this.uploadStatus = 'העלאה הושלמה בהצלחה!';
+      this.isSuccess = true;
     } catch (error: any) {
       console.error('Upload failed', error);
-      this.uploadStatus = `Upload failed: ${error.message}`;
-      alert(`Upload failed: ${error.message}`);
+      this.uploadStatus = `העלאה נכשלה: ${error.message}`;
     } finally {
       this.isUploading = false;
       this.cdr.detectChanges();
       console.log('--- Send Files Finished (State Reset) ---');
     }
+  }
+
+  resetForm() {
+    this.isSuccess = false;
+    this.isUploading = false;
+    this.uploadStatus = '';
+    this.iniFile = null;
+    this.bkmvdataFile = null;
+    // Keep CaseNumber and Dates for convenience unless asked otherwise
   }
 }

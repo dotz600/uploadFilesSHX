@@ -16,7 +16,7 @@
             <line stroke-linecap="round" x1="12" y1="3" x2="12" y2="15" />
           </svg>
         </div>
-        <p>Drag & drop file or <span>browse</span></p>
+        <p>גרור ושחרר קובץ או <span>לחץ לבחירה</span></p>
       </div>
 
       <div *ngIf="files.length > 0" class="file-display">
@@ -27,7 +27,7 @@
             <span class="file-size">{{ (files[0].size / 1024).toFixed(1) }} KB</span>
           </div>
         </div>
-        <button class="remove-btn" (click)="$event.stopPropagation(); removeFile()" title="Remove file">
+        <button class="remove-btn" (click)="$event.stopPropagation(); removeFile()" title="הסר קובץ">
           ✕
         </button>
       </div>

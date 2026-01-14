@@ -5,14 +5,80 @@
     width: 100%;
     max-width: 1200px;
     padding: 20px;
+    position: relative;
 }
 
-.page-title {
+.top-bar {
+    width: 100%;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    min-height: 50px;
+}
+
+.page-title-mini {
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
     font-weight: 800;
-    letter-spacing: -0.5px;
+    font-size: 2.2rem;
+    margin: 0;
+    text-align: center;
+}
+
+.token-container {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 5px 15px;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.token-container.token-active {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    cursor: pointer;
+}
+
+.token-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.compact-token-input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 0.85rem;
+    outline: none;
+    width: 120px;
+}
+
+.compact-token-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.small-set-btn {
+    background: #2575fc;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.v-mark {
+    font-size: 1.2rem;
+    line-height: 1;
 }
 
 .form-container {
@@ -34,7 +100,7 @@
 .input-group {
     display: flex;
     flex-direction: column;
-    text-align: left;
+    text-align: right;
 }
 
 .input-group label {
@@ -111,6 +177,49 @@
     padding: 10px 20px;
     border-radius: 20px;
     animation: fadeIn 0.5s;
+}
+
+.error-msg {
+    background: rgba(220, 38, 38, 0.4);
+    border: 1px solid rgba(220, 38, 38, 0.5);
+}
+
+.success-section {
+    text-align: center;
+    padding: 40px;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 600px;
+    animation: slideUp 0.6s ease;
+}
+
+.success-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.success-section h2 {
+    color: #166534;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.success-section p {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Token Section Styles */

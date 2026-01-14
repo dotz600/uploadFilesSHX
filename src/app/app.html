@@ -1,52 +1,56 @@
-<main class="main-container">
-  <h1 class="page-title">File Upload Dashboard</h1>
-
-  <!-- Token Section -->
-  <div class="token-section glass-card">
-    <div class="input-group full-width">
-      <label>Authorization Token (Bearer)</label>
-      <div class="token-input-wrapper">
-        <input type="password" [(ngModel)]="token" placeholder="Paste your token here..." class="premium-input"
-          [disabled]="isTokenSet">
-        <button class="set-token-btn" (click)="setToken()" *ngIf="!isTokenSet">Set</button>
-        <button class="edit-token-btn" (click)="isTokenSet = false" *ngIf="isTokenSet">Edit</button>
-        <div class="check-mark" *ngIf="isTokenSet">
-          ✅
-        </div>
+<main class="main-container" dir="rtl">
+  <!-- Top Bar with Token -->
+  <div class="top-bar">
+    <div class="token-container" [class.token-active]="isTokenSet">
+      <div class="token-input-group" *ngIf="!isTokenSet">
+        <input type="password" [(ngModel)]="token" placeholder="טוקן אבטחה..." class="compact-token-input">
+        <button class="small-set-btn" (click)="setToken()">הגדר</button>
+      </div>
+      <div class="token-verified" *ngIf="isTokenSet" (click)="isTokenSet = false" title="ערוך טוקן">
+        <span class="v-mark">✅</span>
       </div>
     </div>
+    <h1 class="page-title-mini">לוח בקרה לשידור קבצים</h1>
+  </div>
+
+  <!-- Success Section -->
+  <div class="success-section glass-card" *ngIf="isSuccess">
+    <div class="success-icon">🎉</div>
+    <h2>השידור הושלם בהצלחה!</h2>
+    <p>הקבצים שלך הועברו למערכת בצורה תקינה.</p>
+    <button class="send-btn" (click)="resetForm()">שידור קבצים נוספים</button>
   </div>
 
   <!-- Main Form -->
-  <div class="form-container glass-card">
+  <div class="form-container glass-card" *ngIf="!isSuccess">
     <div class="input-group">
-      <label>Case Number</label>
-      <input type="number" [(ngModel)]="caseNumber" placeholder="e.g. 123456" class="premium-input">
+      <label>מספר תיק</label>
+      <input type="number" [(ngModel)]="caseNumber" placeholder="למשל: 123456" class="premium-input">
     </div>
     <div class="input-group">
-      <label>Start Period</label>
+      <label>תאריך התחלה</label>
       <input type="date" [(ngModel)]="startPeriod" class="premium-input">
     </div>
     <div class="input-group">
-      <label>End Period</label>
+      <label>תאריך סיום</label>
       <input type="date" [(ngModel)]="endPeriod" class="premium-input">
     </div>
   </div>
 
-  <div class="upload-grid">
-    <app-file-upload title="Select INI File" accept=".txt" (fileSelected)="onIniSelected($event)">
+  <div class="upload-grid" *ngIf="!isSuccess">
+    <app-file-upload title="בחר קובץ INI" accept=".txt" (fileSelected)="onIniSelected($event)">
     </app-file-upload>
 
-    <app-file-upload title="Select BKMVDATA File" accept=".txt" (fileSelected)="onBkmvdataSelected($event)">
+    <app-file-upload title="בחר קובץ BKMVDATA" accept=".txt" (fileSelected)="onBkmvdataSelected($event)">
     </app-file-upload>
   </div>
 
-  <div class="actions">
+  <div class="actions" *ngIf="!isSuccess">
     <button class="send-btn" [disabled]="isUploading" (click)="sendFiles()">
-      {{ isUploading ? 'Uploading...' : 'Send Files' }}
+      {{ isUploading ? 'משדר...' : 'שידור קבצים' }}
     </button>
   </div>
 
-  <p *ngIf="uploadStatus" class="status-msg">{{ uploadStatus }}</p>
+  <p *ngIf="uploadStatus" class="status-msg" [class.error-msg]="uploadStatus.includes('נכשל')">{{ uploadStatus }}</p>
 
 </main>

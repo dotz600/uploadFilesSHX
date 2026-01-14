@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./file-upload.css']
 })
 export class FileUploadComponent {
-  @Input() title: string = 'Upload File';
+  @Input() title: string = 'העלאת קובץ';
   @Input() accept: string = '*/*';
   @Output() fileSelected = new EventEmitter<File | null>();
 
