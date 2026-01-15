@@ -11,6 +11,12 @@
       </div>
     </div>
     <h1 class="page-title-mini">לוח בקרה לשידור קבצים</h1>
+
+    <!-- Demo Mode Toggle Switch -->
+    <div class="toggle-switch" (click)="toggleDemoMode()">
+      <input type="checkbox" [checked]="!isDemoMode" class="toggle-input" readonly>
+      <span class="toggle-slider"></span>
+    </div>
   </div>
 
   <!-- Success Section -->

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FileUploadComponent } from './file-upload/file-upload';
 import { FileUploadService } from './services/file-upload.service';
 import { UploadRequest } from './services/file-upload.models';
+import { AppConfigService } from './services/app-config.service';
 
 @Component({
   selector: 'app-root',
@@ -16,9 +17,9 @@ export class AppComponent {
   title = 'file-upload-app';
 
   // Form State
-  caseNumber: number | null = null;
-  startPeriod: string = '';
-  endPeriod: string = '';
+  caseNumber: number | null = 529999989;
+  startPeriod: string = '2025-01-01';
+  endPeriod: string = '2025-12-31';
   token: string = '';
   isTokenSet = false;
 
@@ -32,8 +33,17 @@ export class AppComponent {
 
   constructor(
     private uploadService: FileUploadService,
-    private cdr: ChangeDetectorRef
-  ) { } // Using property injection instead of constructor injection if preferred, but ctor is standard. Fix imports above if needed.
+    private cdr: ChangeDetectorRef,
+    public configService: AppConfigService
+  ) { }
+
+  get isDemoMode(): boolean {
+    return this.configService.isDemoMode;
+  }
+
+  toggleDemoMode(): void {
+    this.configService.toggleDemoMode();
+  }
 
   setToken() {
     let cleanToken = this.token.trim();
@@ -73,20 +83,31 @@ export class AppComponent {
       this.isUploading = true;
       this.uploadStatus = 'מתחילה בשידור...';
 
-      const request: UploadRequest = {
-        caseNumber: this.caseNumber,
-        startPeriod: this.startPeriod,
-        endPeriod: this.endPeriod,
-      };
+      // Check if demo mode is enabled
+      if (this.isDemoMode) {
+        console.log('🎭 DEMO MODE: Simulating upload...');
+        // Simulate upload delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('🎭 DEMO MODE: Upload simulation complete');
+        this.uploadStatus = 'העלאה הושלמה בהצלחה!';
+        this.isSuccess = true;
+      } else {
+        // Production mode - real API calls
+        const request: UploadRequest = {
+          caseNumber: this.caseNumber,
+          startPeriod: this.startPeriod,
+          endPeriod: this.endPeriod,
+        };
 
-      await this.uploadService.uploadPair(
-        [this.iniFile!, this.bkmvdataFile!],
-        this.token,
-        request
-      );
+        await this.uploadService.uploadPair(
+          [this.iniFile!, this.bkmvdataFile!],
+          this.token,
+          request
+        );
 
-      this.uploadStatus = 'העלאה הושלמה בהצלחה!';
-      this.isSuccess = true;
+        this.uploadStatus = 'העלאה הושלמה בהצלחה!';
+        this.isSuccess = true;
+      }
     } catch (error: any) {
       console.error('Upload failed', error);
       this.uploadStatus = `העלאה נכשלה: ${error.message}`;
