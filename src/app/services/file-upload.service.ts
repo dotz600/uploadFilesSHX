@@ -2,66 +2,78 @@ import { Injectable } from '@angular/core';
 import { FileUploadConfig } from './file-upload.config';
 import { UploadRequest } from './file-upload.models';
 import { GoogleStorageService } from './google-storage.service';
-import { TaxAuthorityApiService } from './tax-authority-api.service';
+import { UniStructFileUploadLinksApiService } from './uni-struct-file-upload-links-api.service';
 
+/**
+ * Service to handle the entire file upload process.
+ * Orchestrates fetching upload URLs and uploading files to Google Storage.
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class FileUploadService {
     constructor(
-        private taxApi: TaxAuthorityApiService,
-        private storage: GoogleStorageService
+        private uploadLinksApi: UniStructFileUploadLinksApiService,
+        private googleStorageService: GoogleStorageService
     ) { }
 
-    // Upload a pair of files (uses both URLs)
+    /**
+     * Uploads a pair of files (e.g., data file and configuration file) to the cloud.
+     *
+     * @param filesToUpload - Tuple containing two files to upload.
+     * @param authToken - The authentication token.
+     * @param uploadRequestData - Metadata needed to request upload URLs.
+     * @returns A promise resolving to a tuple of unique file IDs.
+     */
     async uploadPair(
-        files: [File, File], // [INI, BKMVDATA]
-        token: string,
-        request: UploadRequest
+        filesToUpload: [File, File], // [INI, BKMVDATA]
+        authToken: string,
+        uploadRequestData: UploadRequest
     ): Promise<[string, string]> {
-        // 1. Get URLs
-        console.log('A. Requesting signed URLs from service...');
-        const response = await this.taxApi.getUploadUrls(token, request);
-        console.log('B. Signed URLs received:', response.data?.files.length, 'files');
-        const fileIds: [string, string] = ['', ''];
+        // 1. Get Signed Upload URLs
+        console.log('A. Requesting signed upload URLs from UniStruct API...');
+        const apiResponse = await this.uploadLinksApi.getUploadUtils(authToken, uploadRequestData);
+        console.log('B. Signed URLs received. Total files expected:', apiResponse.data?.files.length);
 
-        // 2. Upload each file
+        const uploadedFileIds: [string, string] = ['', ''];
+
+        // 2. Upload each file using the received URLs
         for (let i = 0; i < 2; i++) {
-            const file = files[i];
-            if (!file) {
-                console.warn(`File index ${i} is missing, skipping.`);
+            const currentLocalFile = filesToUpload[i];
+            if (!currentLocalFile) {
+                console.warn(`File at index ${i} is missing, skipping upload.`);
                 continue;
             }
 
-            const fileData = response.data!.files[i];
+            const remoteFileData = apiResponse.data!.files[i];
 
-            console.log(`Step ${i + 1}/2: Uploading local file "${file.name}" to remote file name "${fileData.fileName}"`);
-            console.log(`Using Sign URL: ${fileData.signUrl}`);
+            console.log(`Step ${i + 1}/2: Uploading local file "${currentLocalFile.name}" to cloud as "${remoteFileData.fileName}"`);
+            console.log(`Sign URL: ${remoteFileData.signedUploadUrl}`);
 
             try {
-                // 3. Initiate
-                const uploadUrl = await this.storage.initiateUpload(
-                    fileData.signUrl,
-                    fileData.headers,
-                    file.size
+                // 3. Initiate Resumable Upload
+                const resumableUploadUrl = await this.googleStorageService.initiateResumableUpload(
+                    remoteFileData.signedUploadUrl,
+                    remoteFileData.headers,
+                    currentLocalFile.size
                 );
 
-                // 4. Chunked Upload
-                const chunkSize = this.calculateChunkSize(file.size);
-                await this.storage.uploadChunks(file, uploadUrl, chunkSize);
+                // 4. Perform Chunked Upload
+                const optimalChunkSize = this.calculateOptimalChunkSize(currentLocalFile.size);
+                await this.googleStorageService.uploadFileInChunks(currentLocalFile, resumableUploadUrl, optimalChunkSize);
 
-                fileIds[i] = fileData.fileUniqueId;
-                console.log(`✓ File ${i + 1} complete. ID: ${fileIds[i]}`);
+                uploadedFileIds[i] = remoteFileData.fileUniqueId;
+                console.log(`✓ File ${i + 1} upload complete. ID: ${uploadedFileIds[i]}`);
             } catch (err: any) {
                 console.error(`Error during upload of file ${i + 1}:`, err);
-                throw new Error(`Failed to upload file ${i + 1} (${file.name}): ${err.message || err}`);
+                throw new Error(`Failed to upload file ${i + 1} (${currentLocalFile.name}): ${err.message || err}`);
             }
         }
 
-        return fileIds;
+        return uploadedFileIds;
     }
 
-    private calculateChunkSize(fileSize: number): number {
+    private calculateOptimalChunkSize(fileSize: number): number {
         return fileSize > FileUploadConfig.CHUNK_SIZE_THRESHOLD
             ? FileUploadConfig.DEFAULT_CHUNK_SIZE
             : fileSize;
